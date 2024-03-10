@@ -1,10 +1,22 @@
 from rest_framework import serializers
-from Calendar.models.availability import Availability
+from ..models.availability import Availability
 
 
-
-class AvailabilitySerializer(serializers.ModelSerializer):
+class AvailabilityCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
-        fields = "__all__"
-        
+        fields = ['date_time', 'preference']
+
+
+class AvailabilityViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Availability
+        fields = ['id', 'date_time', 'preference']
+        extra_kwargs = {'id': {'read_only': True}}
+
+
+class AvailabilityUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Availability
+        fields = ['id', 'date_time', 'preference']
+

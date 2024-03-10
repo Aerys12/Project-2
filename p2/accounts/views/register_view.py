@@ -1,12 +1,14 @@
-from accounts.forms.register_form import RegisterForm
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-class RegisterView(CreateView):
-    template_name = 'accounts/register.html'
-    form_class = RegisterForm
-    success_url = reverse_lazy('accounts:login')
-
-    def form_valid(self, form):
-        self.request.session['form'] = 'register'  
-        return super().form_valid(form)
+class RegisterView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        email = request.data.get('email')
+        if not username or not password or not email:
+            return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.create_user(username=username, password=password, email=email)
+        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)

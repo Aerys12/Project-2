@@ -5,7 +5,7 @@ class Meeting(models.Model):
     receiver = models.CharField(max_length=200)
     status = models.BooleanField()
     start_time = models.DateTimeField()
-    calendar = models.ForeignKey('Calendar', related_name='meetings', on_delete=models.CASCADE)
+    calendar = models.ForeignKey('Calendar', related_name='meeting_calendar', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

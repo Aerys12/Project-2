@@ -19,7 +19,7 @@ class CalendarCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Calendar
-        fields = ["title", "description", "duration",
+        fields = ["title", "description", "duration", "location",
                   "availability_calendar"]
 
     def create(self, validated_data):
@@ -58,7 +58,7 @@ class CalendarViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Calendar
-        fields = ["id", "title", "description", "duration",
+        fields = ["id", "title", "description", "duration", "location",
                   "availability_calendar", 'creator']
         extra_kwargs = {'id': {'read_only': True}}
 
@@ -79,7 +79,8 @@ class CalendarUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Calendar
-        fields = ['id', 'title', 'description', 'duration', 'availability_calendar']
+        fields = ['id', 'title', 'description', 'duration', "location",
+                  'availability_calendar']
 
     def update(self, instance, validated_data):
         """

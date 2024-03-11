@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ..models.calendar import Calendar
 from ..models.availability import Availability
-from .availability_serializer import AvailabilityCreateSerializer, AvailabilityViewSerializer
+from .availability_serializer import AvailabilityCreateSerializer, AvailabilityViewSerializer, AvailabilityUpdateSerializer
 
 
 class CalendarCreateSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class CalendarViewSerializer(serializers.ModelSerializer):
 
 
 class CalendarUpdateSerializer(serializers.ModelSerializer):
-    availability_calendar = AvailabilityViewSerializer(many=True)
+    availability_calendar = AvailabilityUpdateSerializer(many=True)
 
     class Meta:
         model = Calendar
@@ -37,15 +37,17 @@ class CalendarUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         availabilities_data = validated_data.pop('availability_calendar', [])
+        print(availabilities_data)
         instance = super().update(instance, validated_data)
 
         current_availability_ids = set(instance.availability_calendar.values_list('id', flat=True))
         updated_availability_ids = set()
+        print(current_availability_ids)
 
         for availability_data in availabilities_data:
             availability_id = availability_data.get('id', None)
             #if 'id' in the current database update it:
-            if availability_id and Availability.objects.filter(id=availability_id, calendar=instance).exists():
+            if availability_id in current_availability_ids:
                 avail_instance = Availability.objects.get(id=availability_id)
                 for key, value in availability_data.items():
                     setattr(avail_instance, key, value)
@@ -53,6 +55,7 @@ class CalendarUpdateSerializer(serializers.ModelSerializer):
                 updated_availability_ids.add(availability_id)
             #if id does not exists (we should give new availability id value of or None but it might raise is_valid error -1)
             else:
+                availability_data['id'] = None
                 new_availability = Availability.objects.create(calendar=instance, **availability_data)
                 updated_availability_ids.add(new_availability.id)
         availabilities_to_delete = current_availability_ids - updated_availability_ids

@@ -16,6 +16,7 @@ class AvailabilityViewSerializer(serializers.ModelSerializer):
 
 
 class AvailabilityUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = Availability
         fields = ['id', 'date_time', 'preference']

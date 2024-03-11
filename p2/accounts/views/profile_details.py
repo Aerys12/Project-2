@@ -1,17 +1,16 @@
-from django.http import JsonResponse
-from django.views import View
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
-class ProfileDetailsView(View):
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            user = request.user
-            data = {
-                "id": user.id,
-                'username': user.username,
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,    
-            }
-            return JsonResponse(data)
-        else:
-            return JsonResponse({'error': 'UNAUTHORIZED'}, status=401)
+class ProfileDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        })

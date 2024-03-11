@@ -1,26 +1,19 @@
-from accounts.forms.login_form import LoginForm
-from django.contrib.auth import login  
-from django.urls import reverse_lazy
-from django.views.generic import FormView
-from django.contrib.auth import authenticate  
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
 
-class LoginView(FormView):
-    template_name = 'accounts/login.html'
-    form_class = LoginForm
-    success_url = reverse_lazy('accounts:profile_view')
-
-    def form_valid(self, form):
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        user = authenticate(username=username, password=password) 
-        print(f"user: {user}")
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
         if user is not None:
-            response = super().form_valid(form)
-            login(self.request, user)
-            return response
-            
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            })
         else:
-            form.add_error(None, 'Username or password is invalid')
-            return self.form_invalid(form)
-        
+            return Response({'error': 'Invalid Credentials'}, status=400)
         

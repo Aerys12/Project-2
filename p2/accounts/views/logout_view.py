@@ -1,14 +1,13 @@
-from django.contrib.auth.views import LogoutView
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView, status
+from rest_framework.response import Response
 
-class Logout(LogoutView):
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse_lazy('accounts:login'))
-        return super().dispatch(request, *args, **kwargs)
-      
-    def get_next_page(self):
-        return reverse_lazy('accounts:login')
-    
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            refresh_token = request.data['refresh']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

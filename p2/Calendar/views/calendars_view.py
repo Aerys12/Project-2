@@ -7,9 +7,15 @@ from ..models.calendar import Calendar
 
 
 class CalendarsView(ListAPIView):
+    """
+    A view for retrieving calendars created by the authenticated user.
+    """
     serializer_class = CalendarViewSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """
+        Returns the queryset of calendars created by the authenticated user.
+        """
         user = self.request.user
         return Calendar.objects.filter(creator=user)

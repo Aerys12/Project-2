@@ -3,6 +3,9 @@ from Calendar.models.meeting import Meeting
 
 
 class MeetingSerializer(serializers.ModelSerializer):
+    """
+    Serializer class for the Meeting model.
+    """
     class Meta:
         model = Meeting
         fields = ['title', 'receiver', 'status', 'start_time', 'calendar']
@@ -13,3 +16,4 @@ class MeetingSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+

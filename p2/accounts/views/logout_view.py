@@ -4,6 +4,16 @@ from rest_framework.response import Response
 
 class LogoutView(APIView):
     def post(self, request):
+        """
+        Handle the logout functionality by invalidating the provided refresh token.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object with a success message if logout is successful,
+                      or an error message if an exception occurs.
+        """
         try:
             refresh_token = request.data['refresh']
             token = RefreshToken(refresh_token)

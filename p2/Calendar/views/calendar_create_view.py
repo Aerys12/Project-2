@@ -1,15 +1,13 @@
 from rest_framework.generics import CreateAPIView
 from ..serializers.calendar_serializer import CalendarCreateSerializer
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from ..models.calendar import Calendar
 
 
 class CalendarCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    def post(self, request):
-        serializer = CalendarCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(creator=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = Calendar.objects.all()
+    serializer_class = CalendarCreateSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)

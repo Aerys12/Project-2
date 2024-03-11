@@ -5,37 +5,98 @@ from .availability_serializer import AvailabilityCreateSerializer, AvailabilityV
 
 
 class CalendarCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a new calendar.
+
+    This serializer is used to create a new calendar object with its associated availability objects.
+
+    Attributes:
+        availability_calendar (AvailabilityCreateSerializer): Serializer for creating availability objects.
+
+    """
+
     availability_calendar = AvailabilityCreateSerializer(many=True)
 
     class Meta:
         model = Calendar
-        fields = ["title", "description", "duration",
+        fields = ["title", "description", "duration", "location",
                   "availability_calendar"]
 
     def create(self, validated_data):
+        """
+        Create a new calendar object.
+
+        This method creates a new calendar object with the provided validated data.
+        It also creates the associated availability objects.
+
+        Args:
+            validated_data (dict): The validated data for creating the calendar.
+
+        Returns:
+            Calendar: The created calendar object.
+
+        """
         availability_data = validated_data.pop("availability_calendar")
         calendar = Calendar.objects.create(**validated_data)
         for availability in availability_data:
             Availability.objects.create(calendar=calendar, **availability)
         return calendar
 
+
 class CalendarViewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for viewing a calendar.
+
+    This serializer is used to view the details of a calendar object with its associated availability objects.
+
+    Attributes:
+        availability_calendar (AvailabilityViewSerializer): Serializer for viewing availability objects.
+
+    """
+
     availability_calendar = AvailabilityViewSerializer(many=True)
+
     class Meta:
         model = Calendar
-        fields = ["id", "title", "description", "duration",
+        fields = ["id", "title", "description", "duration", "location",
                   "availability_calendar", 'creator']
         extra_kwargs = {'id': {'read_only': True}}
 
 
 class CalendarUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating a calendar.
+
+    This serializer is used to update the details of a calendar object.
+    It also updates the associated availability objects.
+
+    Attributes:
+        availability_calendar (AvailabilityUpdateSerializer): Serializer for updating availability objects.
+
+    """
+
     availability_calendar = AvailabilityUpdateSerializer(many=True)
 
     class Meta:
         model = Calendar
-        fields = ['id', 'title', 'description', 'duration', 'availability_calendar']
+        fields = ['id', 'title', 'description', 'duration', "location",
+                  'availability_calendar']
 
     def update(self, instance, validated_data):
+        """
+        Update a calendar object.
+
+        This method updates the details of a calendar object with the provided validated data.
+        It also updates the associated availability objects.
+
+        Args:
+            instance (Calendar): The calendar object to be updated.
+            validated_data (dict): The validated data for updating the calendar.
+
+        Returns:
+            Calendar: The updated calendar object.
+
+        """
         availabilities_data = validated_data.pop('availability_calendar', [])
         print(availabilities_data)
         instance = super().update(instance, validated_data)

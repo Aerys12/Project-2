@@ -3,12 +3,33 @@ from ..models.availability import Availability
 
 
 class AvailabilityCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating Availability objects.
+
+    Fields:
+    - date_time: DateTimeField representing the date and time of availability.
+    - preference: IntegerField representing the preference level.
+
+    Usage:
+    - Use this serializer to create new Availability objects.
+    """
     class Meta:
         model = Availability
         fields = ['date_time', 'preference']
 
 
 class AvailabilityViewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for viewing Availability objects.
+
+    Fields:
+    - id: IntegerField representing the unique identifier of the availability.
+    - date_time: DateTimeField representing the date and time of availability.
+    - preference: IntegerField representing the preference level.
+
+    Usage:
+    - Use this serializer to view existing Availability objects.
+    """
     class Meta:
         model = Availability
         fields = ['id', 'date_time', 'preference']
@@ -16,6 +37,17 @@ class AvailabilityViewSerializer(serializers.ModelSerializer):
 
 
 class AvailabilityUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating Availability objects.
+
+    Fields:
+    - id: IntegerField representing the unique identifier of the availability (optional).
+    - date_time: DateTimeField representing the updated date and time of availability.
+    - preference: IntegerField representing the updated preference level.
+
+    Usage:
+    - Use this serializer to update existing Availability objects.
+    """
     id = serializers.IntegerField(required=False)
     class Meta:
         model = Availability

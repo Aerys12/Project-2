@@ -4,6 +4,30 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 class RegisterView(APIView):
+    """
+    API view for user registration.
+
+    This view handles the registration of a new user by receiving a POST request
+    with the following parameters:
+    - username: The desired username for the new user.
+    - password1: The password for the new user.
+    - password2: The confirmation password for the new user.
+    - email: The email address for the new user.
+    - first_name: The first name of the new user.
+    - last_name: The last name of the new user.
+
+    If any of the required fields are missing or the passwords do not match,
+    an error response is returned. Otherwise, a new user is created and a success
+    response is returned.
+
+    HTTP Methods:
+    - POST: Create a new user.
+
+    Returns:
+    - 201 Created: If the user is created successfully.
+    - 400 Bad Request: If any of the required fields are missing or the passwords do not match.
+    """
+
     def post(self, request):
         username = request.data.get('username')
         password1 = request.data.get('password1')

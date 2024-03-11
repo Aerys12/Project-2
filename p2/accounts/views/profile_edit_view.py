@@ -5,9 +5,20 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 class ProfileEditView(APIView):
+    """
+    API view for editing user profile information and password.
+    Requires authentication for all methods.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Retrieves the user's profile information.
+
+        Returns:
+            Response: User profile information including username, email, first name, and last name.
+        """
         user = request.user
         return Response({
             'username': user.username,
@@ -17,6 +28,15 @@ class ProfileEditView(APIView):
         })
 
     def put(self, request):
+        """
+        Updates the user's profile information.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: Updated user profile information including username, email, first name, and last name.
+        """
         user = request.user
         user.first_name = request.data.get('first_name', user.first_name)
         user.last_name = request.data.get('last_name', user.last_name)
@@ -30,6 +50,15 @@ class ProfileEditView(APIView):
         })
     
     def patch(self, request):
+        """
+        Updates the user's password.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: Success message if the password is updated successfully, otherwise an error message.
+        """
         user = request.user
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')

@@ -1,5 +1,3 @@
-# meeting_deletion_view.py
-
 from rest_framework import generics
 from Calendar.models.meeting import Meeting
 from ..permissions import IsOwner

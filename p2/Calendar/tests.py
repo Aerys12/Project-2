@@ -21,19 +21,19 @@ class MeetingViewTests(TestCase):
             status=False, start_time=datetime.now(), calendar=self.calendar
         )
 
-    # def test_add_meeting(self):
-    #     url = reverse('Calendar:meeting_add', kwargs={'calendar_id': self.calendar.id})
-    #     data = {
-    #         'title': 'Team Meeting',
-    #         'receiver': 'team@example.com',
-    #         'status': False,
-    #         'start_time': datetime.now()
-    #     }
-    #     response = self.client.post(url, data)
-    #     print(response.data) 
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(Meeting.objects.count(), 2)
-    #     self.assertEqual(Meeting.objects.last().title, 'Team Meeting')
+    def test_add_meeting(self): ####
+        url = reverse('Calendar:meeting_add', kwargs={'calendar_id': self.calendar.id})
+        data = {
+            'title': 'Team Meeting',
+            'receiver': 'team@example.com',
+            'status': False,
+            'start_time': datetime.now()
+        }
+        response = self.client.post(url, data)
+        print(response.data) 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Meeting.objects.count(), 2)
+        self.assertEqual(Meeting.objects.last().title, 'Team Meeting') ###
 
     def test_retrieve_meeting_details(self):
         url = reverse('Calendar:meeting_details', kwargs={'calendar_id': self.calendar.id, 'meeting_id': self.meeting.id})
@@ -64,12 +64,13 @@ class MeetingViewTests(TestCase):
         with self.assertRaises(Meeting.DoesNotExist):
             Meeting.objects.get(id=self.meeting.id)
 
-    # def test_list_meetings(self):
-    #     url = reverse('Calendar:meetings_all', kwargs={'calendar_id': self.calendar.id})
-    #     response = self.client.get(url)
-    #     print(response.data) 
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue('Test Meeting' in [m['title'] for m in response.data])
+    def test_list_meetings(self):
+        Meeting.objects.create(title='Team Meeting', receiver='team@example.com', calendar=self.calendar)
+        url = reverse('Calendar:meetings_all', kwargs={'calendar_id': self.calendar.id})
+        self.client.force_authenticate(user=self.user)  # Authenticating the user for the test client.
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('Team Meeting' in [m['title'] for m in response.data])
 
     def test_add_meeting_non_existent_calendar(self):
         url = reverse('Calendar:meeting_add', kwargs={'calendar_id': 9999})  # assuming 9999 is a non-existent calendar id
@@ -82,25 +83,30 @@ class MeetingViewTests(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # def test_update_meeting_not_owned_by_user(self):
-    #     # Create another user and calendar
-    #     other_user = User.objects.create_user(username='otheruser', password='testpassword')
-    #     other_calendar = Calendar.objects.create(title='Other Test Calendar', duration=30, creator=other_user)
-    #     other_meeting = Meeting.objects.create(
-    #         title='Other Test Meeting', receiver='other@example.com',
-    #         status=False, start_time=datetime.now(), calendar=other_calendar
-    #     )
+    def test_update_meeting_not_owned_by_user(self):########
+        # Create another user and calendar only if it doesn't exist
+        username = 'otheruser'
+        if not User.objects.filter(username=username).exists():
+            other_user = User.objects.create_user(username=username, password='testpassword')
+        else:
+            other_user = User.objects.get(username=username)
         
-    #     url = reverse('Calendar:meeting_edit', kwargs={'calendar_id': other_calendar.id, 'meeting_id': other_meeting.id})
-    #     data = {
-    #         'title': 'Updated Meeting',
-    #         'receiver': 'update@example.com',
-    #         'status': True,
-    #         'start_time': datetime.now().isoformat()
-    #     }
-    #     response = self.client.put(url, data)
-    #     print(response.data) 
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        other_calendar = Calendar.objects.create(title='Other Test Calendar', duration=30, creator=other_user)
+        other_meeting = Meeting.objects.create(
+            title='Other Test Meeting', receiver='other@example.com',
+            status=False, start_time=datetime.now(), calendar=other_calendar
+        )
+        
+        url = reverse('Calendar:meeting_edit', kwargs={'calendar_id': other_calendar.id, 'meeting_id': other_meeting.id})
+        data = {
+            'title': 'Updated Meeting',
+            'receiver': 'update@example.com',
+            'status': True,
+            'start_time': datetime.now().isoformat()
+        }
+        response = self.client.put(url, data)
+        print(response.data) 
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN) ####
 
     def test_access_meeting_details_unauthenticated_user(self):
         self.client.logout()  # Make sure the client is not authenticated

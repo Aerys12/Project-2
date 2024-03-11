@@ -6,6 +6,7 @@ from ..serializers.meeting_serializer import MeetingSerializer
 from ..permissions import IsOwner
 from rest_framework.exceptions import NotFound
 
+
 class MeetingAddView(generics.CreateAPIView):
     queryset = Meeting.objects.all()
     serializer_class = MeetingSerializer
@@ -13,10 +14,10 @@ class MeetingAddView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         calendar_id = self.kwargs.get('calendar_id')
-        # Check if the Calendar exists
         try:
-            calendar = Calendar.objects.get(pk=calendar_id)
+            calendar = Calendar.objects.get(pk=calendar_id, creator=self.request.user)
         except Calendar.DoesNotExist:
             raise NotFound(detail="Calendar not found", code=status.HTTP_404_NOT_FOUND)
         
-        serializer.save(calendar_id=calendar_id, creator=self.request.user)
+        serializer.save(calendar=calendar)
+

@@ -22,7 +22,7 @@ urlpatterns = [
 
     path('calendars/<int:calendar_id>/meetings/add/', MeetingAddView.as_view(), name='meeting_add'),
     path('calendars/<int:calendar_id>/meetings/<int:meeting_id>/delete/', MeetingDeletionView.as_view(), name='meeting_delete'),
-    path('calendars/<int:calendar_id>/meetings/<int:meeting_id>/', MeetingDetailsView.as_view(), name='meeting_details'),
+    path('calendars/<int:calendar_id>/meetings/<int:meeting_id>/details/', MeetingDetailsView.as_view(), name='meeting_details'),
     path('calendars/<int:calendar_id>/meetings/<int:meeting_id>/edit/', MeetingEditView.as_view(), name='meeting_edit'),
-    path('calendars/<int:calendar_id>/meetings/', MeetingsView.as_view(), name='meetings_all'),
+    path('calendars/<int:calendar_id>/meetings/all/', MeetingsView.as_view(), name='meetings_all'),
 ]

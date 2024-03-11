@@ -1,5 +1,3 @@
-# meeting_details_view.py
-
 from rest_framework import generics
 from Calendar.models.meeting import Meeting
 from ..serializers.meeting_serializer import MeetingSerializer

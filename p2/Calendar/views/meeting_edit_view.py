@@ -1,5 +1,3 @@
-# meeting_edit_view.py
-
 from rest_framework import generics, status
 from Calendar.models.meeting import Meeting
 from Calendar.models.calendar import Calendar

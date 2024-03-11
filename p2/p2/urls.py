@@ -29,6 +29,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("Calendar/", include("Calendar.urls")),
+
     path('schema/', schema_view),
-    
+
 ]

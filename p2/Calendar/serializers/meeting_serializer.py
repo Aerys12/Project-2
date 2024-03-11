@@ -1,7 +1,15 @@
 from rest_framework import serializers
 from Calendar.models.meeting import Meeting
 
+
 class MeetingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting
-        fields = "__all__"
+        fields = ['title', 'receiver', 'status', 'start_time', 'calendar']
+        read_only_fields = ['calendar']
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
